@@ -139,23 +139,29 @@
     .gauge-scale { display: grid; grid-template-columns: 8em 1fr; gap: 12px; font-size: 11px; color: var(--ink-3); }
     .gauge-scale div:last-child { display: flex; justify-content: space-between; }
 
-    /* ---------- 勉強時間（分布） ---------- */
-    .hist { display: grid; grid-template-columns: repeat(6, 1fr); gap: 2px; align-items: end; height: 190px; border-bottom: 1px solid var(--ink-3); }
-    .hist .col { display: flex; flex-direction: column; justify-content: flex-end; height: 100%; }
-    .hist .bar { background: var(--accent); border-radius: 4px 4px 0 0; margin: 0 14%; }
-    .hist .bar.over { background: #9db6dc; }
-    .hist .pct { font-size: 13px; font-weight: 700; text-align: center; margin-bottom: 4px; }
-    .hist .col:hover .bar { filter: brightness(0.9); }
-    .hist-labels { display: grid; grid-template-columns: repeat(6, 1fr); gap: 2px; font-size: 12px; color: var(--ink-2); text-align: center; line-height: 1.4; margin-top: 6px; }
-    .bracket { display: grid; grid-template-columns: repeat(6, 1fr); gap: 2px; margin-top: 10px; font-size: 13px; }
-    .bracket .in { grid-column: 1 / 5; border: 1px solid var(--accent); border-top: 0; height: 10px; }
-    .bracket .in-t { grid-column: 1 / 5; text-align: center; color: var(--accent); font-weight: 700; margin-top: 2px; }
+    /* ---------- 勉強時間（レベル別） ---------- */
+    .lv-head, .lv-row { display: grid; grid-template-columns: 170px 130px 1fr 120px; gap: 14px; align-items: center; }
+    .lv-head { font-size: 12px; color: var(--ink-3); padding-bottom: 6px; border-bottom: 1px solid var(--line); }
+    .lv-row { padding: 14px 0; border-bottom: 1px solid var(--line-soft); }
+    .lv-name { font-weight: 700; font-size: 15px; line-height: 1.5; }
+    .lv-name small { display: block; font-weight: normal; font-size: 12px; color: var(--ink-3); }
+    .lv-hrs { font-size: 18px; font-weight: 700; color: var(--accent); line-height: 1.4; white-space: nowrap; }
+    .lv-hrs small { font-size: 12px; margin-left: 1px; }
+    .lv-period { font-size: 15px; font-weight: 700; line-height: 1.4; }
+    .lv-period small { display: block; font-size: 11px; font-weight: normal; color: var(--ink-3); }
+    .lv-track { position: relative; height: 20px; background: #fff; border: 1px solid var(--line-soft); }
+    .lv-track .g { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--line-soft); }
+    .lv-track .b { position: absolute; top: 3px; bottom: 3px; background: var(--accent); border-radius: 4px; }
+    .lv-track .b.soft { background: #9db6dc; }
+    .lv-axis { display: grid; grid-template-columns: 170px 130px 1fr 120px; gap: 14px; font-size: 11px; color: var(--ink-3); margin-top: 6px; }
+    .lv-axis .ticks { position: relative; height: 16px; }
+    .lv-axis .ticks span { position: absolute; transform: translateX(-50%); white-space: nowrap; }
+    .lv-axis .ticks span:first-child { transform: none; }
+    .lv-axis .ticks span:last-child { transform: translateX(-100%); }
 
     .who { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .who > div { border: 1px solid var(--line); padding: 16px 18px; }
-    .who .h { font-weight: 700; font-size: 16px; }
-    .who .hrs { font-size: 22px; font-weight: 700; color: var(--accent); line-height: 1.4; margin: 4px 0 8px; }
-    .who .hrs small { font-size: 12px; color: var(--ink-3); font-weight: normal; margin-left: 6px; }
+    .who .h { font-weight: 700; font-size: 16px; margin-bottom: 6px; }
     .who p { margin: 0; color: var(--ink-2); font-size: 14px; line-height: 1.8; }
 
     .points { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -218,10 +224,15 @@
       .stair:nth-child(4) { width: 100%; }
       .stair .ex { display: none; }
       .fields, .who, .points { grid-template-columns: 1fr; }
+      .lv-head { display: none; }
+      .lv-row { grid-template-columns: 1fr auto; grid-template-areas: "name name" "hrs period" "bar bar"; gap: 4px 12px; }
+      .lv-name { grid-area: name; }
+      .lv-hrs { grid-area: hrs; }
+      .lv-period { grid-area: period; font-size: 14px; text-align: right; }
+      .lv-track { grid-area: bar; margin-top: 4px; }
+      .lv-axis { grid-template-columns: 1fr; }
+      .lv-axis > span { display: none; }
       .gauge-row, .gauge-scale { grid-template-columns: 7.4em 1fr; font-size: 12.5px; }
-      .hist .bar { margin: 0 8%; }
-      .hist .pct { font-size: 12px; }
-      .hist-labels { font-size: 11px; }
       .timeline > li { padding-left: 54px; }
     }
   </style>
@@ -249,7 +260,7 @@
       <div class="tile"><span class="k">受験料</span><span class="v">7,500<small>円＋税</small></span></div>
       <div class="tile"><span class="k">試験</span><span class="v">120<small>分</small> / 100<small>問</small></span><span class="s">パソコンで解答する四択問題</span></div>
       <div class="tile"><span class="k">合格ライン</span><span class="v">600<small>点</small></span><span class="s">1,000点中。各分野300点以上も必要</span></div>
-      <div class="tile"><span class="k">勉強時間の目安</span><span class="v">100<small>時間</small>前後</span><span class="s">1日1〜2時間 × 1〜3ヶ月</span></div>
+      <div class="tile"><span class="k">勉強時間の目安</span><span class="v">50〜180<small>時間</small></span><span class="s">1日2時間で約1〜3ヶ月</span></div>
     </div>
 
     <div class="notice">
@@ -346,37 +357,48 @@
   <!-- ================= 2. 勉強時間と内容 ================= -->
   <section id="study">
     <h2><span class="no">2</span>合格に必要な勉強時間と学習内容</h2>
-    <p class="point">1日1〜2時間、1〜3ヶ月が目安。初学者の合格者でも約7割は100時間未満です。</p>
-
-    <div class="who">
-      <div>
-        <div class="h">IT経験者</div>
-        <div class="hrs">100〜150時間<small>一般的な目安</small></div>
-        <p>IT基礎の確認に加え、経営全般・法務・プロジェクト管理などストラテジ／マネジメント系の補強が中心です。</p>
-      </div>
-      <div>
-        <div class="h">非IT経験者・初学者</div>
-        <div class="hrs">180時間<small>一般的な目安</small></div>
-        <p>実際には100時間未満で合格する人が多数です。テクノロジ系は用語と仕組みを押さえれば得点できます。</p>
-      </div>
-    </div>
+    <p class="point">1日2時間の勉強で、約1ヶ月〜3ヶ月が目安です。必要な時間はITの経験によって変わります。</p>
 
     <figure>
-      <figcaption>図4　初学者の合格者が実際にかけた勉強時間<small>48名</small></figcaption>
-      <div class="hist" role="img" aria-label="30時間未満2.1%、30〜50時間20.8%、50〜80時間25.0%、80〜100時間22.9%、100〜150時間18.8%、150時間以上10.4%">
-        <div class="col" title="30時間未満：1名（2.1%）"><span class="pct">2.1%</span><div class="bar" style="height:8.4%"></div></div>
-        <div class="col" title="30〜50時間：10名（20.8%）"><span class="pct">20.8%</span><div class="bar" style="height:83.2%"></div></div>
-        <div class="col" title="50〜80時間：12名（25.0%）"><span class="pct">25.0%</span><div class="bar" style="height:100%"></div></div>
-        <div class="col" title="80〜100時間：11名（22.9%）"><span class="pct">22.9%</span><div class="bar" style="height:91.6%"></div></div>
-        <div class="col" title="100〜150時間：9名（18.8%）"><span class="pct">18.8%</span><div class="bar over" style="height:75.2%"></div></div>
-        <div class="col" title="150時間以上：5名（10.4%）"><span class="pct">10.4%</span><div class="bar over" style="height:41.6%"></div></div>
+      <figcaption>図4　レベル別の勉強時間と期間の目安<small>1日2時間勉強した場合</small></figcaption>
+      <div class="lv-head" aria-hidden="true"><span>受験者のレベル</span><span>勉強時間の目安</span><span></span><span>期間の目安</span></div>
+      <div class="lv-row">
+        <div class="lv-name">IT未経験・文系<small>初心者</small></div>
+        <div class="lv-hrs">約100〜180<small>時間</small></div>
+        <div class="lv-track" title="IT未経験・文系：約100〜180時間"><span class="g" style="left:25%"></span><span class="g" style="left:50%"></span><span class="g" style="left:75%"></span><span class="b" style="left:50%;width:40%"></span></div>
+        <div class="lv-period">約1.5〜3ヶ月</div>
       </div>
-      <div class="hist-labels">
-        <span>30時間<br>未満</span><span>30〜50</span><span>50〜80</span><span>80〜100</span><span>100〜150</span><span>150時間<br>以上</span>
+      <div class="lv-row">
+        <div class="lv-name">ITの基礎知識あり</div>
+        <div class="lv-hrs">約100<small>時間前後</small></div>
+        <div class="lv-track" title="ITの基礎知識あり：約100時間前後"><span class="g" style="left:25%"></span><span class="g" style="left:50%"></span><span class="g" style="left:75%"></span><span class="b soft" style="left:45%;width:10%"></span></div>
+        <div class="lv-period">約1.5ヶ月</div>
       </div>
-      <div class="bracket" aria-hidden="true"><div class="in"></div><div class="in-t">100時間未満：70.8%</div></div>
-      <p class="source">出典：スタディング「ITパスポートとは？どんな資格か・難易度や取得メリットをわかりやすく解説」（2026年8月31日更新）掲載の合格者アンケート（IT初心者属性48名）</p>
+      <div class="lv-row">
+        <div class="lv-name">IT実務経験者・理系など</div>
+        <div class="lv-hrs">約50〜80<small>時間</small></div>
+        <div class="lv-track" title="IT実務経験者・理系など：約50〜80時間"><span class="g" style="left:25%"></span><span class="g" style="left:50%"></span><span class="g" style="left:75%"></span><span class="b" style="left:25%;width:15%"></span></div>
+        <div class="lv-period">約1ヶ月未満〜1.5ヶ月</div>
+      </div>
+      <div class="lv-axis" aria-hidden="true">
+        <span></span><span></span>
+        <div class="ticks"><span style="left:0">0</span><span style="left:25%">50</span><span style="left:50%">100</span><span style="left:75%">150</span><span style="left:100%">200</span></div>
+        <span></span>
+      </div>
+      <p class="source">「ITの基礎知識あり」は幅のない目安（100時間前後）のため、薄い色で示しています。</p>
     </figure>
+
+    <h3>レベル別の学習の重点</h3>
+    <div class="who">
+      <div>
+        <div class="h">IT未経験・文系の方</div>
+        <p>不安を感じやすいのはテクノロジ系ですが、問われるのは利用者として知っておくべき基礎です。用語と仕組みを押さえれば得点できます。業務で触れるストラテジ・マネジメント系は得点源になります。</p>
+      </div>
+      <div>
+        <div class="h">ITの知識・実務経験がある方</div>
+        <p>IT基礎の確認に加え、経営全般・法務・プロジェクト管理など、ストラテジ／マネジメント系の補強が中心になります。</p>
+      </div>
+    </div>
 
     <h3>勉強の進め方</h3>
     <ol class="points">
