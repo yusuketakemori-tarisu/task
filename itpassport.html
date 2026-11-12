@@ -4,371 +4,271 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ITパスポート取得に関しての情報サイト</title>
-  <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
   <style>
+    * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
     body {
-      font-family: "Segoe UI", "Noto Sans JP", -apple-system, BlinkMacSystemFont, "Meiryo", sans-serif;
-      background-color: #faf9f8;
-      color: #323130;
-      line-height: 1.65;
+      margin: 0;
+      font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
+      font-size: 15px;
+      line-height: 1.85;
+      color: #222;
+      background: #fff;
     }
-    .fluent-card {
-      background-color: #ffffff;
-      border: 1px solid #edebe9;
-      box-shadow: 0 1.6px 3.6px 0 rgba(0, 0, 0, 0.06), 0 0.3px 0.9px 0 rgba(0, 0, 0, 0.04);
+    .page {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 40px 20px 64px;
     }
-    .step-circle {
-      width: 28px;
-      height: 28px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 9999px;
-      background-color: #0078d4;
-      color: #ffffff;
+    a { color: #1a4f9c; }
+    a:hover { color: #0d3570; }
+
+    /* ヘッダー */
+    .crumb {
+      font-size: 12px;
+      color: #777;
+      margin: 0 0 8px;
+    }
+    h1 {
+      font-size: 24px;
+      line-height: 1.5;
+      margin: 0 0 12px;
+      letter-spacing: 0.02em;
+    }
+    .lead { margin: 0 0 32px; color: #444; }
+
+    /* 概要 */
+    .overview {
+      border-top: 3px solid #222;
+      border-bottom: 1px solid #ccc;
+      padding: 20px 0 24px;
+      margin-bottom: 48px;
+    }
+    .overview h2 {
+      font-size: 17px;
+      margin: 0 0 16px;
+      border: 0;
+      padding: 0;
+    }
+    .facts {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 24px;
+    }
+    .facts th, .facts td {
+      text-align: left;
+      vertical-align: top;
+      padding: 8px 0;
+      border-bottom: 1px dotted #ccc;
+    }
+    .facts th {
+      width: 8.5em;
+      font-weight: normal;
+      color: #666;
+    }
+    .flow {
+      list-style: none;
+      counter-reset: flow;
+      margin: 0 0 20px;
+      padding: 0;
+    }
+    .flow li {
+      counter-increment: flow;
+      position: relative;
+      padding: 0 0 12px 2.2em;
+    }
+    .flow li::before {
+      content: counter(flow);
+      position: absolute;
+      left: 0;
+      top: 0;
       font-weight: 700;
+      font-size: 18px;
+      line-height: 1.5;
+      color: #1a4f9c;
+    }
+    .flow b { display: inline-block; margin-right: 0.5em; }
+    .flow span { color: #555; }
+    .flow a { font-size: 13px; margin-left: 0.5em; }
+    .overview .next {
+      margin: 0;
+      font-size: 14px;
+    }
+
+    /* 本文 */
+    h2 {
+      font-size: 19px;
+      line-height: 1.5;
+      margin: 48px 0 16px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid #ccc;
+    }
+    h2 .no { color: #999; font-weight: normal; margin-right: 0.4em; }
+    section { scroll-margin-top: 16px; }
+    p { margin: 0 0 1em; }
+
+    .study {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 8px 0 0;
+    }
+    .study th, .study td {
+      border: 1px solid #ddd;
+      padding: 12px 14px;
+      text-align: left;
+      vertical-align: top;
+    }
+    .study thead th {
+      background: #f4f4f2;
       font-size: 13px;
-      flex-shrink: 0;
+      color: #555;
+      font-weight: normal;
     }
-    .step-circle.is-goal { background-color: #107c10; }
+    .study tbody th { width: 9.5em; }
+    .study td.hours {
+      white-space: nowrap;
+      font-weight: 700;
+      font-size: 16px;
+    }
+    .study small { display: block; font-weight: normal; font-size: 12px; color: #777; }
 
-    /* ロードマップ（サマリー） */
-    .roadmap-step { position: relative; }
-    @media (min-width: 768px) {
-      .roadmap-step:not(:last-child)::after {
-        content: "";
-        position: absolute;
-        top: 30px;
-        right: -14px;
-        width: 12px;
-        height: 12px;
-        border-top: 2px solid #c7e0f4;
-        border-right: 2px solid #c7e0f4;
-        transform: rotate(45deg);
-      }
-    }
-    @media (max-width: 767px) {
-      .roadmap-step:not(:last-child)::after {
-        content: "";
-        position: absolute;
-        left: 27px;
-        bottom: -14px;
-        width: 2px;
-        height: 12px;
-        background-color: #c7e0f4;
-      }
-    }
+    .steps { margin: 0; padding-left: 1.6em; }
+    .steps li { margin-bottom: 14px; padding-left: 0.2em; }
+    .steps li::marker { font-weight: 700; }
+    .steps b { display: block; }
 
-    /* 詳細アコーディオン */
-    details > summary { list-style: none; cursor: pointer; }
-    details > summary::-webkit-details-marker { display: none; }
-    details .chevron { transition: transform 0.2s ease; }
-    details[open] .chevron { transform: rotate(180deg); }
-    details > summary:focus-visible { outline: 2px solid #0078d4; outline-offset: 2px; border-radius: 8px; }
-    section[id], details[id] { scroll-margin-top: 16px; }
+    .resources { margin: 0; padding-left: 1.6em; }
+    .resources li { margin-bottom: 14px; }
+    .resources .url { word-break: break-all; font-size: 13px; }
+    .resources ol { list-style: lower-alpha; margin: 4px 0 0; padding-left: 1.6em; }
+    .resources ol li { margin: 0; }
+    .note { font-size: 13px; color: #777; margin-top: 16px; }
+
+    .back { margin-top: 56px; font-size: 13px; }
+
+    @media (max-width: 560px) {
+      .page { padding-top: 28px; }
+      h1 { font-size: 21px; }
+      .facts th { width: 6.5em; }
+      .study, .study thead, .study tbody, .study tr, .study th, .study td { display: block; }
+      .study thead { display: none; }
+      .study tr { border: 1px solid #ddd; margin-bottom: 12px; }
+      .study th, .study td { border: 0; padding: 8px 12px; }
+      .study tbody th { background: #f4f4f2; }
+    }
   </style>
 </head>
-<body class="p-4 sm:p-6 md:p-8 max-w-4xl mx-auto antialiased">
+<body>
+<div class="page" id="top">
 
-  <!-- ========== ヘッダー ========== -->
-  <header class="fluent-card rounded-lg p-6 sm:p-8 border-t-4 border-t-[#0078d4] mb-6">
-    <div class="mb-2">
-      <span class="inline-block bg-[#eff6fc] text-[#0078d4] text-xs font-semibold px-2.5 py-1 rounded border border-[#c7e0f4]">
-        社内ポータル / 資格取得支援
-      </span>
-    </div>
-    <h1 class="text-2xl sm:text-3xl font-bold text-[#201f1e] tracking-tight mb-2">
-      ITパスポート取得に関しての情報サイト
-    </h1>
-    <p class="text-sm sm:text-base text-[#605e5c]">
-      ITを「利用する側」の基礎知識を証明する<span class="font-bold text-[#d13438] bg-[#fde7e9] px-1.5 py-0.5 rounded mx-1">国家資格</span>です。まずは下のサマリーで受験までの全体像をつかんでください。
-    </p>
-  </header>
+  <p class="crumb">社内ポータル ＞ 資格取得支援</p>
+  <h1>ITパスポート取得に関しての情報サイト</h1>
+  <p class="lead">ITパスポートは、ITを「利用する側」の基礎知識を証明する<strong>国家資格</strong>です。まずは下の概要で、受験までの流れをご確認ください。</p>
 
-  <!-- ========== サマリー：受験までの流れ ========== -->
-  <section id="summary" class="fluent-card rounded-lg p-6 sm:p-7 mb-6 border-l-4 border-l-[#0078d4]" aria-labelledby="summary-heading">
-    <div class="flex items-center justify-between flex-wrap gap-2 mb-4">
-      <h2 id="summary-heading" class="text-lg font-bold text-[#201f1e] flex items-center gap-2">
-        <span class="w-1.5 h-5 bg-[#0078d4] rounded-full inline-block"></span>
-        サマリー：試験を受けるまでの流れ
-      </h2>
-      <span class="text-xs font-semibold text-[#0078d4] bg-[#eff6fc] px-2 py-0.5 rounded">まずはここだけ</span>
-    </div>
+  <!-- 概要 -->
+  <div class="overview">
+    <h2>概要：受験までの流れ</h2>
 
-    <!-- キーファクト -->
-    <dl class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-      <div class="bg-[#faf9f8] border border-[#edebe9] rounded-md p-3">
-        <dt class="text-xs text-[#605e5c] mb-0.5">レベル</dt>
-        <dd class="text-sm sm:text-base font-bold text-[#201f1e]">国家資格（レベル1）</dd>
-      </div>
-      <div class="bg-[#faf9f8] border border-[#edebe9] rounded-md p-3">
-        <dt class="text-xs text-[#605e5c] mb-0.5">勉強時間の目安</dt>
-        <dd class="text-sm sm:text-base font-bold text-[#201f1e]">約 50〜150 時間</dd>
-      </div>
-      <div class="bg-[#faf9f8] border border-[#edebe9] rounded-md p-3">
-        <dt class="text-xs text-[#605e5c] mb-0.5">受験料</dt>
-        <dd class="text-sm sm:text-base font-bold text-[#201f1e]">7,500 円</dd>
-      </div>
-      <div class="bg-[#faf9f8] border border-[#edebe9] rounded-md p-3">
-        <dt class="text-xs text-[#605e5c] mb-0.5">試験日・会場</dt>
-        <dd class="text-sm sm:text-base font-bold text-[#201f1e]">通年・全国の会場</dd>
-      </div>
-    </dl>
+    <table class="facts">
+      <tr><th>区分</th><td>国家資格（情報処理技術者試験 レベル1）</td></tr>
+      <tr><th>勉強時間</th><td>約50〜150時間（経験により異なります）</td></tr>
+      <tr><th>受験料</th><td>7,500円</td></tr>
+      <tr><th>試験日・会場</th><td>通年。全国のテストセンターから選んで予約</td></tr>
+    </table>
 
-    <!-- ロードマップ -->
-    <ol class="grid grid-cols-1 md:grid-cols-5 gap-4 md:gap-5">
-      <li class="roadmap-step">
-        <a href="#detail-study" class="block h-full bg-[#faf9f8] hover:bg-[#eff6fc] border border-[#edebe9] hover:border-[#c7e0f4] rounded-md p-3.5 transition-colors">
-          <div class="flex md:flex-col items-center md:items-start gap-3 md:gap-2">
-            <span class="step-circle">1</span>
-            <div>
-              <div class="font-bold text-sm text-[#201f1e]">勉強する</div>
-              <div class="text-xs text-[#605e5c]">1日1〜2時間 × 1〜3ヶ月</div>
-            </div>
-          </div>
-        </a>
-      </li>
-      <li class="roadmap-step">
-        <a href="#detail-flow" class="block h-full bg-[#faf9f8] hover:bg-[#eff6fc] border border-[#edebe9] hover:border-[#c7e0f4] rounded-md p-3.5 transition-colors">
-          <div class="flex md:flex-col items-center md:items-start gap-3 md:gap-2">
-            <span class="step-circle">2</span>
-            <div>
-              <div class="font-bold text-sm text-[#201f1e]">利用者IDを登録</div>
-              <div class="text-xs text-[#605e5c]">公式サイトで新規登録</div>
-            </div>
-          </div>
-        </a>
-      </li>
-      <li class="roadmap-step">
-        <a href="#detail-flow" class="block h-full bg-[#faf9f8] hover:bg-[#eff6fc] border border-[#edebe9] hover:border-[#c7e0f4] rounded-md p-3.5 transition-colors">
-          <div class="flex md:flex-col items-center md:items-start gap-3 md:gap-2">
-            <span class="step-circle">3</span>
-            <div>
-              <div class="font-bold text-sm text-[#201f1e]">会場・日時を予約</div>
-              <div class="text-xs text-[#605e5c]">空きがあれば直前でもOK</div>
-            </div>
-          </div>
-        </a>
-      </li>
-      <li class="roadmap-step">
-        <a href="#detail-flow" class="block h-full bg-[#faf9f8] hover:bg-[#eff6fc] border border-[#edebe9] hover:border-[#c7e0f4] rounded-md p-3.5 transition-colors">
-          <div class="flex md:flex-col items-center md:items-start gap-3 md:gap-2">
-            <span class="step-circle">4</span>
-            <div>
-              <div class="font-bold text-sm text-[#201f1e]">受験料を支払う</div>
-              <div class="text-xs text-[#605e5c]">7,500円（カード等）</div>
-            </div>
-          </div>
-        </a>
-      </li>
-      <li class="roadmap-step">
-        <a href="#detail-flow" class="block h-full bg-[#dff6dd] hover:bg-[#cbefc8] border border-[#bfe5bc] rounded-md p-3.5 transition-colors">
-          <div class="flex md:flex-col items-center md:items-start gap-3 md:gap-2">
-            <span class="step-circle is-goal">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
-            </span>
-            <div>
-              <div class="font-bold text-sm text-[#0b5a0b]">確認票を持って受験</div>
-              <div class="text-xs text-[#3b6b3b]">マイページからDL</div>
-            </div>
-          </div>
-        </a>
-      </li>
+    <ol class="flow">
+      <li><b>勉強する</b><span>1日1〜2時間、1〜3ヶ月程度が目安</span><a href="#study">詳しく</a></li>
+      <li><b>利用者IDを登録</b><span>公式サイトで新規登録</span><a href="#apply">詳しく</a></li>
+      <li><b>会場・日時を予約</b><span>空きがあれば直前でも可</span></li>
+      <li><b>受験料を支払う</b><span>クレジットカード・コンビニ・ペイジー</span></li>
+      <li><b>確認票を持って受験</b><span>マイページからダウンロード</span></li>
     </ol>
 
-    <!-- 主要リンク -->
-    <div class="mt-5 pt-4 border-t border-[#edebe9] flex flex-col sm:flex-row gap-2 sm:gap-3">
-      <a href="https://www3.jitec.ipa.go.jp/JitesCbt/index.html" target="_blank" rel="noopener noreferrer"
-         class="inline-flex items-center justify-center gap-1.5 bg-[#0078d4] hover:bg-[#106ebe] text-white text-sm font-semibold px-4 py-2 rounded-md transition-colors">
-        公式サイトで申し込む
-        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-      </a>
-      <a href="#detail-resources"
-         class="inline-flex items-center justify-center gap-1.5 bg-white hover:bg-[#f3f2f1] text-[#0078d4] text-sm font-semibold px-4 py-2 rounded-md border border-[#c7e0f4] transition-colors">
-        無料の学習教材を見る
-      </a>
-    </div>
+    <p class="next">
+      申し込み：<a href="https://www3.jitec.ipa.go.jp/JitesCbt/index.html" target="_blank" rel="noopener noreferrer">ITパスポート試験公式サイト</a>
+      ／ 教材：<a href="#resources">無料の学習教材</a>
+    </p>
+  </div>
+
+  <!-- 1 -->
+  <section id="about">
+    <h2><span class="no">1.</span>ITパスポート試験とは</h2>
+    <p>ITパスポート（通称「iパス」）は、経済産業省が認定する情報処理技術者試験のなかで最も基礎的な入門レベル（レベル1）の<strong>国家資格</strong>です。プログラミングや専門的なシステム開発のスキルを問う試験ではなく、「ITを利用する側」としてビジネスや社会で必須となる基礎知識を幅広く証明する資格です。</p>
   </section>
 
-  <!-- ========== 詳細情報 ========== -->
-  <div class="flex items-center gap-3 mb-3 mt-8">
-    <h2 class="text-base font-bold text-[#605e5c] shrink-0">詳細情報</h2>
-    <div class="h-px bg-[#edebe9] flex-1"></div>
-  </div>
+  <!-- 2 -->
+  <section id="study">
+    <h2><span class="no">2.</span>合格に必要な勉強時間の目安</h2>
+    <table class="study">
+      <thead>
+        <tr><th>対象</th><th>勉強時間</th><th>ポイント</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th>IT経験者<br><small>IT業務経験・基礎あり</small></th>
+          <td class="hours">約100〜150時間<small>平均</small></td>
+          <td>IT基礎の確認に加え、経営全般・法務・プロジェクト管理などのストラテジ／マネジメント系知識の補強が中心になります。</td>
+        </tr>
+        <tr>
+          <th>非IT経験者<br><small>未経験・文系・非IT職</small></th>
+          <td class="hours">約50〜100時間<small>一般目安：180時間</small></td>
+          <td>通勤などのスキマ時間を活用し、1日1〜2時間の学習で「1〜3ヶ月程度」での合格実績が多数あります。</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
 
-  <div class="space-y-3">
+  <!-- 3 -->
+  <section id="apply">
+    <h2><span class="no">3.</span>ITパスポート試験を受験するには</h2>
+    <p>ITパスポート試験は、年間を通じて、全国にあるテストセンターでほぼ毎日（毎週末や平日など）実施されています。特定の試験日はなく、自分の都合に合わせて受験日と会場を選ぶことができます。</p>
+    <p>受験するためには、公式サイトからのインターネット申し込みが必要です。具体的な受験手順は以下の4ステップです。</p>
+    <ol class="steps">
+      <li>
+        <b>「利用者ID」の登録</b>
+        <a href="https://www3.jitec.ipa.go.jp/JitesCbt/index.html" target="_blank" rel="noopener noreferrer">ITパスポート試験公式サイト</a>にアクセスし、初めての場合は「利用者ID」を新規登録します。
+      </li>
+      <li>
+        <b>試験会場・日時の選択</b>
+        マイページにログイン後、全国47都道府県にあるテストセンターの中から、希望する「会場」「日付」「時間帯」を選択します（座席が空いていれば、直前でも予約可能です）。
+      </li>
+      <li>
+        <b>受験料の支払い</b>
+        受験料（<strong>7,500円</strong>）を支払います。決済方法はクレジットカード、コンビニ決済、ペイジー（銀行振込）から選べます。
+      </li>
+      <li>
+        <b>受験票の確認</b>
+        支払いが完了すると予約が確定し、マイページから「確認票」がダウンロードできるようになります（当日の持ち物として必要になります）。
+      </li>
+    </ol>
+  </section>
 
-    <!-- 詳細1：ITパスポート試験とは -->
-    <details id="detail-about" class="fluent-card rounded-lg group">
-      <summary class="flex items-center justify-between gap-3 p-4 sm:p-5">
-        <span class="flex items-center gap-2 font-bold text-[#201f1e]">
-          <span class="w-1.5 h-5 bg-[#0078d4] rounded-full inline-block"></span>
-          ITパスポート試験とは
-        </span>
-        <svg class="chevron w-5 h-5 text-[#605e5c] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-      </summary>
-      <div class="px-4 sm:px-5 pb-5">
-        <p class="text-sm sm:text-base text-[#323130] leading-relaxed">
-          ITパスポート（通称「iパス」）は、経済産業省が認定する情報処理技術者試験のなかで最も基礎的な入門レベル（レベル1）の<span class="font-bold text-[#d13438] bg-[#fde7e9] px-1.5 py-0.5 rounded mx-1">国家資格</span>です。プログラミングや専門的なシステム開発のスキルを問う試験ではなく、「ITを利用する側」としてビジネスや社会で必須となる基礎知識を幅広く証明する資格です。
-        </p>
-      </div>
-    </details>
-
-    <!-- 詳細2：勉強時間の目安 -->
-    <details id="detail-study" class="fluent-card rounded-lg" open>
-      <summary class="flex items-center justify-between gap-3 p-4 sm:p-5">
-        <span class="flex items-center gap-2 font-bold text-[#201f1e]">
-          <span class="w-1.5 h-5 bg-[#0078d4] rounded-full inline-block"></span>
-          合格に必要な勉強時間の目安
-        </span>
-        <svg class="chevron w-5 h-5 text-[#605e5c] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-      </summary>
-      <div class="px-4 sm:px-5 pb-5">
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <!-- IT経験者 -->
-          <div class="border border-[#edebe9] rounded-md p-4">
-            <span class="text-xs font-semibold text-[#0078d4] bg-[#eff6fc] px-2 py-0.5 rounded">IT業務経験・基礎あり</span>
-            <h3 class="text-sm font-bold text-[#201f1e] mt-2 mb-2">IT経験者の平均勉強時間</h3>
-            <div class="bg-[#faf9f8] border border-[#edebe9] rounded-md p-3 mb-2">
-              <span class="text-xl font-bold text-[#0078d4]">約 100 〜 150 時間</span>
-            </div>
-            <p class="text-xs sm:text-sm text-[#605e5c] leading-relaxed">
-              IT基礎の確認に加え、経営全般・法務・プロジェクト管理などのストラテジ／マネジメント系知識の補強が中心になります。
-            </p>
-          </div>
-          <!-- 非IT経験者 -->
-          <div class="border border-[#edebe9] rounded-md p-4">
-            <span class="text-xs font-semibold text-[#107c10] bg-[#dff6dd] px-2 py-0.5 rounded">未経験・文系・非IT職</span>
-            <h3 class="text-sm font-bold text-[#201f1e] mt-2 mb-2">非IT経験者の概算勉強時間</h3>
-            <div class="bg-[#faf9f8] border border-[#edebe9] rounded-md p-3 mb-2 flex items-baseline justify-between flex-wrap gap-1">
-              <span class="text-xl font-bold text-[#107c10]">約 50 〜 100 時間</span>
-              <span class="text-xs text-[#605e5c]">（一般目安：180時間）</span>
-            </div>
-            <p class="text-xs sm:text-sm text-[#605e5c] leading-relaxed">
-              通勤などのスキマ時間を活用し、1日1〜2時間の学習で「1〜3ヶ月程度」での合格実績が多数あります。
-            </p>
-          </div>
-        </div>
-      </div>
-    </details>
-
-    <!-- 詳細3：受験手順 -->
-    <details id="detail-flow" class="fluent-card rounded-lg" open>
-      <summary class="flex items-center justify-between gap-3 p-4 sm:p-5">
-        <span class="flex items-center gap-2 font-bold text-[#201f1e]">
-          <span class="w-1.5 h-5 bg-[#0078d4] rounded-full inline-block"></span>
-          ITパスポート試験を受験するには（申し込み手順）
-        </span>
-        <svg class="chevron w-5 h-5 text-[#605e5c] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-      </summary>
-      <div class="px-4 sm:px-5 pb-5">
-        <p class="text-sm text-[#605e5c] mb-4 leading-relaxed">
-          ITパスポート試験は、年間を通じて、全国にあるテストセンターでほぼ毎日（毎週末や平日など）実施されています。特定の試験日はなく、自分の都合に合わせて受験日と会場を選ぶことができます。<br>
-          受験するためには、公式サイトからのインターネット申し込みが必要です。具体的な受験手順は以下の4ステップです。
-        </p>
-        <ol class="space-y-3">
-          <li class="flex items-start gap-3 p-3.5 bg-[#faf9f8] rounded-md border border-[#edebe9]">
-            <span class="step-circle">1</span>
-            <div class="text-sm">
-              <div class="font-bold text-[#201f1e] mb-0.5">「利用者ID」の登録</div>
-              <div class="text-[#323130] leading-relaxed">
-                <a href="https://www3.jitec.ipa.go.jp/JitesCbt/index.html" target="_blank" rel="noopener noreferrer" class="text-[#0078d4] hover:underline font-medium inline-flex items-center gap-1">
-                  ITパスポート試験公式サイト
-                  <svg class="w-3.5 h-3.5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-                </a>
-                にアクセスし、初めての場合は「利用者ID」を新規登録します。
-              </div>
-            </div>
-          </li>
-          <li class="flex items-start gap-3 p-3.5 bg-[#faf9f8] rounded-md border border-[#edebe9]">
-            <span class="step-circle">2</span>
-            <div class="text-sm">
-              <div class="font-bold text-[#201f1e] mb-0.5">試験会場・日時の選択</div>
-              <div class="text-[#323130] leading-relaxed">
-                マイページにログイン後、<span class="font-semibold underline decoration-[#0078d4] decoration-2 underline-offset-2">全国47都道府県にあるテストセンターの中から、希望する「会場」「日付」「時間帯」を選択します（座席が空いていれば、直前でも予約可能です）</span>。
-              </div>
-            </div>
-          </li>
-          <li class="flex items-start gap-3 p-3.5 bg-[#faf9f8] rounded-md border border-[#edebe9]">
-            <span class="step-circle">3</span>
-            <div class="text-sm">
-              <div class="font-bold text-[#201f1e] mb-0.5">受験料の支払い</div>
-              <div class="text-[#323130] leading-relaxed">
-                受験料（<strong>7,500円</strong>）を支払います。決済方法はクレジットカード、コンビニ決済、ペイジー（銀行振込）から選べます。
-              </div>
-            </div>
-          </li>
-          <li class="flex items-start gap-3 p-3.5 bg-[#faf9f8] rounded-md border border-[#edebe9]">
-            <span class="step-circle">4</span>
-            <div class="text-sm">
-              <div class="font-bold text-[#201f1e] mb-0.5">受験票の確認</div>
-              <div class="text-[#323130] leading-relaxed">
-                支払いが完了すると予約が確定し、マイページから「確認票」がダウンロードできるようになります（当日の持ち物として必要になります）。
-              </div>
-            </div>
-          </li>
+  <!-- 4 -->
+  <section id="resources">
+    <h2><span class="no">4.</span>ITパスポートの試験勉強</h2>
+    <p>現時点の無料コンテンツは以下のとおりです。この他の情報は常時更新してまいります。</p>
+    <ol class="resources">
+      <li>
+        公式過去問サイト：「過去問道場」<br>
+        <a class="url" href="https://www.itpassportsiken.com/ipkakomon.php" target="_blank" rel="noopener noreferrer">https://www.itpassportsiken.com/ipkakomon.php</a>
+      </li>
+      <li>
+        2022〜2023年に実施した社内勉強会資料<br>
+        <a class="url" href="https://deecorp365.sharepoint.com/sites/projects/IT1/Forms/AllItems.aspx" target="_blank" rel="noopener noreferrer">https://deecorp365.sharepoint.com/sites/projects/IT1/Forms/AllItems.aspx</a>
+        <ol>
+          <li>FY22下期 シーズン1</li>
+          <li>FY23下期 シーズン2</li>
         </ol>
-      </div>
-    </details>
+      </li>
+    </ol>
+    <p class="note">※有償サービスやテキストなどに関しては、現在検討中です。</p>
+  </section>
 
-    <!-- 詳細4：学習リソース -->
-    <details id="detail-resources" class="fluent-card rounded-lg" open>
-      <summary class="flex items-center justify-between gap-3 p-4 sm:p-5">
-        <span class="flex items-center gap-2 font-bold text-[#201f1e]">
-          <span class="w-1.5 h-5 bg-[#0078d4] rounded-full inline-block"></span>
-          ITパスポートの試験勉強（無料の学習教材）
-        </span>
-        <svg class="chevron w-5 h-5 text-[#605e5c] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-      </summary>
-      <div class="px-4 sm:px-5 pb-5">
-        <p class="text-sm text-[#605e5c] mb-4">
-          現時点の無料コンテンツは以下のとおりです。この他の情報は常時更新してまいります。
-        </p>
-        <div class="space-y-3">
-          <div class="border border-[#edebe9] rounded-md p-4 bg-white hover:border-[#c7e0f4] transition-colors">
-            <div class="font-bold text-sm text-[#201f1e] mb-1">1. 公式過去問サイト：「過去問道場」</div>
-            <a href="https://www.itpassportsiken.com/ipkakomon.php" target="_blank" rel="noopener noreferrer"
-               class="text-xs sm:text-sm text-[#0078d4] hover:underline break-all inline-flex items-center gap-1 font-medium">
-              <span>https://www.itpassportsiken.com/ipkakomon.php</span>
-              <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-            </a>
-          </div>
-          <div class="border border-[#edebe9] rounded-md p-4 bg-white hover:border-[#c7e0f4] transition-colors">
-            <div class="font-bold text-sm text-[#201f1e] mb-1">2. 2022〜2023年に実施した社内勉強会資料</div>
-            <a href="https://deecorp365.sharepoint.com/sites/projects/IT1/Forms/AllItems.aspx" target="_blank" rel="noopener noreferrer"
-               class="text-xs sm:text-sm text-[#0078d4] hover:underline break-all inline-flex items-center gap-1 font-medium mb-3">
-              <span>https://deecorp365.sharepoint.com/sites/projects/IT1/Forms/AllItems.aspx</span>
-              <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-            </a>
-            <div class="bg-[#faf9f8] p-3 rounded border border-[#edebe9] text-xs sm:text-sm text-[#323130] space-y-1 ml-1">
-              <div class="flex items-center gap-2"><span class="font-semibold text-[#0078d4]">a.</span><span>FY22下期 シーズン1</span></div>
-              <div class="flex items-center gap-2"><span class="font-semibold text-[#0078d4]">b.</span><span>FY23下期 シーズン2</span></div>
-            </div>
-          </div>
-        </div>
-        <p class="text-xs text-[#a19f9d] mt-4 italic">※有償サービスやテキストなどに関しては、現在検討中です。</p>
-      </div>
-    </details>
+  <p class="back"><a href="#top">ページの先頭へ</a></p>
 
-  </div>
-
-  <footer class="text-center mt-8 mb-2">
-    <a href="#summary" class="text-xs text-[#0078d4] hover:underline">↑ サマリーに戻る</a>
-  </footer>
-
-  <script>
-    // サマリーのリンクから詳細へ飛んだとき、閉じているアコーディオンを自動で開く
-    function openTarget() {
-      var el = location.hash && document.querySelector(location.hash);
-      if (el && el.tagName === 'DETAILS') el.open = true;
-    }
-    window.addEventListener('hashchange', openTarget);
-    openTarget();
-  </script>
-
+</div>
 </body>
 </html>
