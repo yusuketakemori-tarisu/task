@@ -8,6 +8,23 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --ink: #222;
+      --ink-2: #555;
+      --ink-3: #888;
+      --line: #d6d6d2;
+      --line-soft: #e8e8e4;
+      --paper: #fff;
+      --paper-2: #f6f6f3;
+      --accent: #1a4f9c;
+      --accent-soft: #e6edf7;
+      /* 出題分野（3分野） */
+      --c-strategy: #2f62b0;
+      --c-management: #d9822b;
+      --c-technology: #2e8a63;
+      --warn: #a3471b;
+      --warn-soft: #fbf1ea;
+    }
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
     body {
@@ -15,258 +32,530 @@
       font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
       font-size: 15px;
       line-height: 1.85;
-      color: #222;
-      background: #fff;
+      color: var(--ink);
+      background: var(--paper);
     }
-    .page {
-      max-width: 760px;
-      margin: 0 auto;
-      padding: 40px 20px 64px;
-    }
-    a { color: #1a4f9c; }
+    .page { max-width: 780px; margin: 0 auto; padding: 40px 20px 64px; }
+    a { color: var(--accent); }
     a:hover { color: #0d3570; }
+    p { margin: 0 0 1em; }
+    strong { font-weight: 700; }
 
-    /* ヘッダー */
-    .crumb {
-      font-size: 12px;
-      color: #777;
-      margin: 0 0 8px;
+    /* ---------- ヘッダー ---------- */
+    .crumb { font-size: 12px; color: var(--ink-3); margin: 0 0 8px; }
+    h1 { font-size: 25px; line-height: 1.5; margin: 0 0 10px; letter-spacing: 0.02em; }
+    .lead { margin: 0 0 20px; color: #444; }
+    .toc {
+      display: flex; flex-wrap: wrap; gap: 4px 18px;
+      margin: 0 0 8px; padding: 10px 0; list-style: none;
+      border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+      font-size: 13px;
     }
-    h1 {
-      font-size: 24px;
-      line-height: 1.5;
-      margin: 0 0 12px;
-      letter-spacing: 0.02em;
-    }
-    .lead { margin: 0 0 32px; color: #444; }
+    .toc a { text-decoration: none; }
+    .toc a:hover { text-decoration: underline; }
 
-    /* 概要 */
-    .overview {
-      border-top: 3px solid #222;
-      border-bottom: 1px solid #ccc;
-      padding: 20px 0 24px;
-      margin-bottom: 48px;
+    /* ---------- 見出し ---------- */
+    h2 {
+      font-size: 20px; line-height: 1.5;
+      margin: 56px 0 18px; padding-bottom: 6px;
+      border-bottom: 2px solid var(--ink);
     }
-    .overview h2 {
-      font-size: 17px;
-      margin: 0 0 16px;
-      border: 0;
-      padding: 0;
-    }
-    .facts {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 24px;
-    }
-    .facts th, .facts td {
-      text-align: left;
-      vertical-align: top;
-      padding: 8px 0;
-      border-bottom: 1px dotted #ccc;
-    }
-    .facts th {
-      width: 8.5em;
-      font-weight: normal;
-      color: #666;
-    }
-    .flow {
-      list-style: none;
-      counter-reset: flow;
-      margin: 0 0 20px;
-      padding: 0;
-    }
-    .flow li {
-      counter-increment: flow;
-      position: relative;
-      padding: 0 0 12px 2.2em;
-    }
-    .flow li::before {
-      content: counter(flow);
-      position: absolute;
-      left: 0;
-      top: 0;
-      font-weight: 700;
-      font-size: 18px;
-      line-height: 1.5;
-      color: #1a4f9c;
-    }
-    .flow b { display: inline-block; margin-right: 0.5em; }
-    .flow span { color: #555; }
-    .flow a { font-size: 13px; margin-left: 0.5em; }
-    .overview .next {
-      margin: 0;
+    h2 .no { color: var(--ink-3); font-weight: normal; margin-right: 0.4em; }
+    h3 { font-size: 16px; margin: 32px 0 10px; }
+    section { scroll-margin-top: 16px; }
+
+    /* ---------- 図 ---------- */
+    figure { margin: 20px 0 28px; padding: 20px; background: var(--paper-2); border: 1px solid var(--line-soft); }
+    figcaption { font-size: 13px; font-weight: 700; margin-bottom: 14px; }
+    figcaption small { font-weight: normal; color: var(--ink-3); margin-left: 0.5em; }
+    .source { font-size: 11.5px; color: var(--ink-3); margin: 12px 0 0; line-height: 1.6; }
+
+    /* ---------- お知らせ ---------- */
+    .notice {
+      margin: 24px 0 0; padding: 14px 16px;
+      border-left: 4px solid var(--warn); background: var(--warn-soft);
       font-size: 14px;
     }
+    .notice b { color: var(--warn); }
+    .notice p:last-child { margin: 0; }
 
-    /* 本文 */
-    h2 {
-      font-size: 19px;
-      line-height: 1.5;
-      margin: 48px 0 16px;
-      padding-bottom: 6px;
-      border-bottom: 1px solid #ccc;
+    /* ---------- 試験レベル（階段図） ---------- */
+    .stairs { display: flex; align-items: flex-end; gap: 6px; height: 200px; }
+    .stair {
+      flex: 1; display: flex; flex-direction: column; justify-content: flex-start;
+      padding: 8px 8px; background: #fff; border: 1px solid var(--line);
+      font-size: 12px; line-height: 1.5; color: var(--ink-2);
     }
-    h2 .no { color: #999; font-weight: normal; margin-right: 0.4em; }
-    section { scroll-margin-top: 16px; }
-    p { margin: 0 0 1em; }
+    .stair .lv { font-size: 11px; color: var(--ink-3); }
+    .stair .nm { font-weight: 700; color: var(--ink); font-size: 13px; }
+    .stair.is-here { background: var(--accent); border-color: var(--accent); color: #dfe8f6; }
+    .stair.is-here .lv { color: #c4d4ee; }
+    .stair.is-here .nm { color: #fff; }
+    .stair:nth-child(1) { height: 34%; }
+    .stair:nth-child(2) { height: 56%; }
+    .stair:nth-child(3) { height: 78%; }
+    .stair:nth-child(4) { height: 100%; }
+    .stairs-axis { display: flex; justify-content: space-between; font-size: 11px; color: var(--ink-3); margin-top: 6px; }
 
-    .study {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 8px 0 0;
-    }
-    .study th, .study td {
-      border: 1px solid #ddd;
-      padding: 12px 14px;
-      text-align: left;
-      vertical-align: top;
-    }
-    .study thead th {
-      background: #f4f4f2;
-      font-size: 13px;
-      color: #555;
-      font-weight: normal;
-    }
-    .study tbody th { width: 9.5em; }
-    .study td.hours {
-      white-space: nowrap;
-      font-weight: 700;
-      font-size: 16px;
-    }
-    .study small { display: block; font-weight: normal; font-size: 12px; color: #777; }
+    /* ---------- 概要表 ---------- */
+    .facts { width: 100%; border-collapse: collapse; margin: 8px 0 0; }
+    .facts th, .facts td { text-align: left; vertical-align: top; padding: 9px 0; border-bottom: 1px solid var(--line-soft); }
+    .facts tr:first-child th, .facts tr:first-child td { border-top: 1px solid var(--line); }
+    .facts th { width: 8em; font-weight: normal; color: var(--ink-2); }
 
-    .steps { margin: 0; padding-left: 1.6em; }
-    .steps li { margin-bottom: 14px; padding-left: 0.2em; }
-    .steps li::marker { font-weight: 700; }
-    .steps b { display: block; }
+    /* ---------- 出題分野（積み上げ帯） ---------- */
+    .stack { display: flex; gap: 2px; height: 40px; }
+    .stack > div {
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-weight: 700; font-size: 13px;
+    }
+    .stack > div:first-child { border-radius: 4px 0 0 4px; }
+    .stack > div:last-child { border-radius: 0 4px 4px 0; }
+    .s-strategy { background: var(--c-strategy); }
+    .s-management { background: var(--c-management); }
+    .s-technology { background: var(--c-technology); }
+    .fields { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 16px; }
+    .field { background: #fff; border: 1px solid var(--line-soft); border-top-width: 3px; padding: 10px 12px; font-size: 13px; line-height: 1.7; }
+    .field.f-strategy { border-top-color: var(--c-strategy); }
+    .field.f-management { border-top-color: var(--c-management); }
+    .field.f-technology { border-top-color: var(--c-technology); }
+    .field .nm { font-weight: 700; font-size: 14px; }
+    .field .ct { color: var(--ink-3); font-size: 12px; margin-left: 0.3em; }
+    .field ul { margin: 6px 0 0; padding-left: 1.1em; color: var(--ink-2); }
 
-    .resources { margin: 0; padding-left: 1.6em; }
-    .resources li { margin-bottom: 14px; }
+    /* ---------- 合格基準 ---------- */
+    .gauge-row { display: grid; grid-template-columns: 7.5em 1fr; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 13px; }
+    .gauge-row:last-of-type { margin-bottom: 0; }
+    .gauge { position: relative; height: 22px; background: #fff; border: 1px solid var(--line); }
+    .gauge .fail { position: absolute; left: 0; top: 0; bottom: 0; background: repeating-linear-gradient(135deg, #eee 0 4px, #f8f8f8 4px 8px); }
+    .gauge .pass { position: absolute; top: 0; bottom: 0; right: 0; background: var(--accent-soft); }
+    .gauge .mark { position: absolute; top: -4px; bottom: -4px; width: 2px; background: var(--accent); }
+    .gauge .val { position: absolute; top: 50%; transform: translate(6px, -50%); font-size: 12px; font-weight: 700; color: var(--accent); white-space: nowrap; }
+    .gauge-row.total .gauge { height: 28px; }
+    .gauge-scale { display: grid; grid-template-columns: 7.5em 1fr; gap: 10px; font-size: 11px; color: var(--ink-3); margin-top: 4px; }
+    .gauge-scale div:last-child { display: flex; justify-content: space-between; }
+    .legend-inline { display: flex; gap: 16px; flex-wrap: wrap; font-size: 12px; color: var(--ink-2); margin-top: 12px; }
+    .legend-inline i { display: inline-block; width: 14px; height: 10px; margin-right: 5px; vertical-align: -1px; border: 1px solid var(--line); }
+
+    /* ---------- 受験までの流れ（サマリ） ---------- */
+    .flow { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; counter-reset: flow; }
+    .flow li { position: relative; padding: 0 6px; text-align: center; counter-increment: flow; }
+    .flow li::before {
+      content: counter(flow);
+      position: relative; z-index: 1;
+      display: flex; align-items: center; justify-content: center;
+      width: 40px; height: 40px; margin: 0 auto 10px;
+      border-radius: 50%; background: #fff; border: 2px solid var(--accent);
+      color: var(--accent); font-weight: 700; font-size: 16px;
+    }
+    .flow li:not(:last-child)::after {
+      content: ""; position: absolute; top: 20px; left: calc(50% + 20px); right: calc(-50% + 20px);
+      height: 2px; background: var(--accent);
+    }
+    .flow li.is-study::before { background: var(--accent); color: #fff; }
+    .flow li.is-goal::before { content: "✓"; background: var(--ink); border-color: var(--ink); color: #fff; }
+    .flow .t { display: block; font-weight: 700; font-size: 14px; line-height: 1.5; }
+    .flow .d { display: block; font-size: 12px; color: var(--ink-2); line-height: 1.6; margin-top: 4px; }
+    .flow .d a { white-space: nowrap; }
+    .span-bar { display: grid; grid-template-columns: repeat(5, 1fr); margin-top: 18px; font-size: 12px; color: var(--ink-2); }
+    .span-bar .seg { border-top: 1px solid var(--ink-3); padding-top: 4px; text-align: center; position: relative; }
+    .span-bar .seg::before, .span-bar .seg::after { content: ""; position: absolute; top: -5px; width: 1px; height: 9px; background: var(--ink-3); }
+    .span-bar .seg::before { left: 0; }
+    .span-bar .seg::after { right: 0; }
+    .span-bar .a { grid-column: 1 / 4; }
+    .span-bar .b { grid-column: 4 / 6; }
+    .summary-links { margin: 18px 0 0; font-size: 14px; }
+
+    /* ---------- 勉強時間（範囲チャート） ---------- */
+    .range-row { display: grid; grid-template-columns: 9em 1fr; gap: 10px; align-items: center; margin-bottom: 14px; font-size: 13px; }
+    .range-row .lb { line-height: 1.5; }
+    .range-row .lb small { display: block; color: var(--ink-3); font-size: 11px; }
+    .track { position: relative; height: 26px; border-left: 1px solid var(--line); }
+    .track .grid { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--line-soft); }
+    .track .bar { position: absolute; top: 4px; bottom: 4px; background: var(--accent); border-radius: 4px; }
+    .track .bar.light { background: #9db6dc; }
+    .track .dot { position: absolute; top: 50%; width: 12px; height: 12px; margin: -6px 0 0 -6px; border-radius: 50%; background: #fff; border: 3px solid var(--accent); }
+    .track .tx { position: absolute; top: 50%; transform: translateY(-50%); font-size: 12px; font-weight: 700; white-space: nowrap; padding-left: 8px; }
+    .range-axis { display: grid; grid-template-columns: 9em 1fr; gap: 10px; font-size: 11px; color: var(--ink-3); }
+    .range-axis .ticks { position: relative; height: 16px; }
+    .range-axis .ticks span { position: absolute; transform: translateX(-50%); }
+    .range-axis .ticks span:first-child { transform: none; }
+
+    /* ---------- 勉強時間（分布） ---------- */
+    .hist { display: grid; grid-template-columns: repeat(6, 1fr); gap: 2px; align-items: end; height: 170px; border-bottom: 1px solid var(--ink-3); }
+    .hist .col { position: relative; display: flex; flex-direction: column; justify-content: flex-end; height: 100%; }
+    .hist .bar { background: var(--accent); border-radius: 4px 4px 0 0; margin: 0 14%; }
+    .hist .bar.over { background: #9db6dc; }
+    .hist .pct { font-size: 12px; font-weight: 700; text-align: center; margin-bottom: 4px; }
+    .hist-labels { display: grid; grid-template-columns: repeat(6, 1fr); gap: 2px; font-size: 11px; color: var(--ink-2); text-align: center; line-height: 1.4; margin-top: 6px; }
+    .bracket { display: grid; grid-template-columns: repeat(6, 1fr); gap: 2px; margin-top: 10px; font-size: 12px; }
+    .bracket .in { grid-column: 1 / 5; border: 1px solid var(--accent); border-top: 0; height: 10px; }
+    .bracket .in-t { grid-column: 1 / 5; text-align: center; color: var(--accent); font-weight: 700; margin-top: 2px; }
+    .hist .col:hover .bar { filter: brightness(0.9); }
+
+    /* ---------- 学習のポイント ---------- */
+    .points { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+    .points li { display: grid; grid-template-columns: 2.4em 1fr; gap: 8px; padding: 12px 0; border-bottom: 1px solid var(--line-soft); }
+    .points .n { font-weight: 700; color: var(--accent); font-size: 18px; line-height: 1.4; }
+    .points b { display: block; }
+    .who { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0 0; }
+    .who > div { border: 1px solid var(--line); padding: 12px 14px; font-size: 14px; }
+    .who .h { font-weight: 700; margin-bottom: 4px; }
+    .who .h small { font-weight: normal; color: var(--ink-3); margin-left: 0.4em; }
+    .who p { margin: 0; color: var(--ink-2); font-size: 13.5px; }
+
+    /* ---------- 申し込み手順（縦タイムライン） ---------- */
+    .timeline { list-style: none; margin: 0; padding: 0; position: relative; }
+    .timeline::before { content: ""; position: absolute; left: 15px; top: 8px; bottom: 8px; width: 2px; background: var(--line); }
+    .timeline > li { position: relative; padding: 0 0 22px 48px; }
+    .timeline > li:last-child { padding-bottom: 0; }
+    .timeline .pin {
+      position: absolute; left: 0; top: 0;
+      width: 32px; height: 32px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      background: #fff; border: 2px solid var(--accent); color: var(--accent);
+      font-weight: 700; font-size: 14px;
+    }
+    .timeline .pin.dark { background: var(--ink); border-color: var(--ink); color: #fff; font-size: 13px; }
+    .timeline .phase { font-size: 11px; color: var(--ink-3); letter-spacing: 0.05em; }
+    .timeline b { display: block; font-size: 15px; line-height: 1.5; margin-bottom: 2px; }
+    .timeline p { margin: 0; font-size: 14px; }
+    .timeline .sub { margin: 8px 0 0; padding: 8px 12px; background: var(--paper-2); font-size: 13px; color: var(--ink-2); }
+    .timeline .sub ul { margin: 0; padding-left: 1.2em; }
+
+    /* ---------- 教材 ---------- */
+    .resources { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+    .resources > li { border: 1px solid var(--line); padding: 14px 16px; display: grid; grid-template-columns: 4.5em 1fr; gap: 12px; }
+    .resources .tag { font-size: 11px; color: var(--ink-2); border: 1px solid var(--line); text-align: center; align-self: start; padding: 2px 0; }
+    .resources .tt { font-weight: 700; }
     .resources .url { word-break: break-all; font-size: 13px; }
-    .resources ol { list-style: lower-alpha; margin: 4px 0 0; padding-left: 1.6em; }
-    .resources ol li { margin: 0; }
-    .note { font-size: 13px; color: #777; margin-top: 16px; }
+    .resources ol { list-style: lower-alpha; margin: 4px 0 0; padding-left: 1.6em; font-size: 14px; }
+    .note { font-size: 13px; color: var(--ink-3); margin-top: 16px; }
 
     .back { margin-top: 56px; font-size: 13px; }
+    .refs { margin-top: 40px; padding-top: 12px; border-top: 1px solid var(--line); font-size: 12px; color: var(--ink-3); line-height: 1.7; }
 
-    @media (max-width: 560px) {
+    /* ---------- スマホ ---------- */
+    @media (max-width: 600px) {
       .page { padding-top: 28px; }
       h1 { font-size: 21px; }
+      figure { padding: 14px; margin-left: -6px; margin-right: -6px; }
+      /* スマホでは階段を横向きにして、上ほど高いレベル */
+      .stairs { flex-direction: column-reverse; align-items: flex-start; height: auto; gap: 4px; }
+      .stair { flex: none; height: auto !important; flex-direction: row; align-items: baseline; gap: 8px; padding: 8px 10px; }
+      .stair:nth-child(1) { width: 55%; }
+      .stair:nth-child(2) { width: 70%; }
+      .stair:nth-child(3) { width: 85%; }
+      .stair:nth-child(4) { width: 100%; }
+      .stair .ex { display: none; }
+      .stairs-axis { display: none; }
+      .fields, .who { grid-template-columns: 1fr; }
       .facts th { width: 6.5em; }
-      .study, .study thead, .study tbody, .study tr, .study th, .study td { display: block; }
-      .study thead { display: none; }
-      .study tr { border: 1px solid #ddd; margin-bottom: 12px; }
-      .study th, .study td { border: 0; padding: 8px 12px; }
-      .study tbody th { background: #f4f4f2; }
+      .gauge-row, .gauge-scale { grid-template-columns: 7.4em 1fr; font-size: 12px; }
+      .range-row, .range-axis { grid-template-columns: 6.5em 1fr; }
+      .hist .bar { margin: 0 8%; }
+      .flow { grid-template-columns: 1fr; }
+      .flow li { display: grid; grid-template-columns: 40px 1fr; gap: 12px; text-align: left; padding: 0 0 18px; }
+      .flow li::before { margin: 0; grid-row: 1 / 3; }
+      .flow li:not(:last-child)::after { top: 40px; bottom: 0; left: 19px; right: auto; width: 2px; height: auto; }
+      .flow .d { margin-top: 0; }
+      .span-bar { display: none; }
+      .resources > li { grid-template-columns: 1fr; gap: 6px; }
+      .resources .tag { justify-self: start; padding: 1px 8px; }
     }
   </style>
 </head>
 <body>
 <div class="page" id="top">
 
+  <!-- ================= タイトル ================= -->
   <p class="crumb">社内ポータル ＞ 資格取得支援</p>
   <h1>ITパスポート取得に関しての情報サイト</h1>
-  <p class="lead">ITパスポートは、ITを「利用する側」の基礎知識を証明する<strong>国家資格</strong>です。まずは下の概要で、受験までの流れをご確認ください。</p>
+  <p class="lead">ITパスポートの概要、受験までの流れ、勉強時間の目安、申し込み手順、教材をまとめています。はじめての方は「2. 受験までの流れ」からご覧ください。</p>
+  <ul class="toc">
+    <li><a href="#about">1. ITパスポートについて</a></li>
+    <li><a href="#summary">2. 受験までの流れ</a></li>
+    <li><a href="#study">3. 勉強時間と学習内容</a></li>
+    <li><a href="#apply">4. 申し込み手順</a></li>
+    <li><a href="#resources">5. 教材</a></li>
+  </ul>
 
-  <!-- 概要 -->
-  <div class="overview">
-    <h2>概要：受験までの流れ</h2>
-
-    <table class="facts">
-      <tr><th>区分</th><td>国家資格（情報処理技術者試験 レベル1）</td></tr>
-      <tr><th>勉強時間</th><td>約50〜150時間（経験により異なります）</td></tr>
-      <tr><th>受験料</th><td>7,500円</td></tr>
-      <tr><th>試験日・会場</th><td>通年。全国のテストセンターから選んで予約</td></tr>
-    </table>
-
-    <ol class="flow">
-      <li><b>勉強する</b><span>1日1〜2時間、1〜3ヶ月程度が目安</span><a href="#study">詳しく</a></li>
-      <li><b>利用者IDを登録</b><span>公式サイトで新規登録</span><a href="#apply">詳しく</a></li>
-      <li><b>会場・日時を予約</b><span>空きがあれば直前でも可</span></li>
-      <li><b>受験料を支払う</b><span>クレジットカード・コンビニ・ペイジー</span></li>
-      <li><b>確認票を持って受験</b><span>マイページからダウンロード</span></li>
-    </ol>
-
-    <p class="next">
-      申し込み：<a href="https://www3.jitec.ipa.go.jp/JitesCbt/index.html" target="_blank" rel="noopener noreferrer">ITパスポート試験公式サイト</a>
-      ／ 教材：<a href="#resources">無料の学習教材</a>
-    </p>
+  <div class="notice">
+    <p><b>【重要】2026年12月28日以降、試験の休止が予定されています。</b><br>
+    試験システムの入れ替えに伴うもので、再開時期は未定です。会場によってはそれより前に実施が終わる場合があります。年内の受験を考えている方は、<a href="https://www3.jitec.ipa.go.jp/JitesCbt/index.html" target="_blank" rel="noopener noreferrer">公式サイト</a>で最新情報を確認のうえ、早めに予約してください。</p>
   </div>
 
-  <!-- 1 -->
+  <!-- ================= 1. ITパスポートについて ================= -->
   <section id="about">
-    <h2><span class="no">1.</span>ITパスポート試験とは</h2>
+    <h2><span class="no">1.</span>ITパスポートについて</h2>
     <p>ITパスポート（通称「iパス」）は、経済産業省が認定する情報処理技術者試験のなかで最も基礎的な入門レベル（レベル1）の<strong>国家資格</strong>です。プログラミングや専門的なシステム開発のスキルを問う試験ではなく、「ITを利用する側」としてビジネスや社会で必須となる基礎知識を幅広く証明する資格です。</p>
-  </section>
+    <p>年齢や実務経験などの受験資格はなく、IT職以外の方や学生も多く受験しています。合格率は50％前後です。</p>
 
-  <!-- 2 -->
-  <section id="study">
-    <h2><span class="no">2.</span>合格に必要な勉強時間の目安</h2>
-    <table class="study">
-      <thead>
-        <tr><th>対象</th><th>勉強時間</th><th>ポイント</th></tr>
-      </thead>
-      <tbody>
-        <tr>
-          <th>IT経験者<br><small>IT業務経験・基礎あり</small></th>
-          <td class="hours">約100〜150時間<small>平均</small></td>
-          <td>IT基礎の確認に加え、経営全般・法務・プロジェクト管理などのストラテジ／マネジメント系知識の補強が中心になります。</td>
-        </tr>
-        <tr>
-          <th>非IT経験者<br><small>未経験・文系・非IT職</small></th>
-          <td class="hours">約50〜100時間<small>一般目安：180時間</small></td>
-          <td>通勤などのスキマ時間を活用し、1日1〜2時間の学習で「1〜3ヶ月程度」での合格実績が多数あります。</td>
-        </tr>
-      </tbody>
+    <figure>
+      <figcaption>図1　情報処理技術者試験の中での位置づけ</figcaption>
+      <div class="stairs" role="img" aria-label="レベル1 ITパスポート、レベル2 基本情報技術者と情報セキュリティマネジメント、レベル3 応用情報技術者、レベル4 高度試験">
+        <div class="stair is-here"><span class="lv">レベル1</span><span class="nm">ITパスポート</span><span class="ex">ITを使う側の基礎</span></div>
+        <div class="stair"><span class="lv">レベル2</span><span class="nm">基本情報技術者 など</span><span class="ex">ITを作る側の基礎</span></div>
+        <div class="stair"><span class="lv">レベル3</span><span class="nm">応用情報技術者</span><span class="ex">応用力・記述式</span></div>
+        <div class="stair"><span class="lv">レベル4</span><span class="nm">高度試験</span><span class="ex">専門分野ごと</span></div>
+      </div>
+      <div class="stairs-axis"><span>基礎</span><span>専門</span></div>
+    </figure>
+
+    <h3>試験の概要</h3>
+    <table class="facts">
+      <tr><th>試験日・会場</th><td>通年（CBT方式）。全国47都道府県のテストセンターから選んで予約</td></tr>
+      <tr><th>試験時間</th><td>120分</td></tr>
+      <tr><th>出題</th><td>100問・四肢択一（パソコンで解答）</td></tr>
+      <tr><th>受験料</th><td>7,500円</td></tr>
+      <tr><th>合格発表</th><td>受験した月の翌月15日前後（得点は試験終了直後に画面で確認できます）</td></tr>
+      <tr><th>有効期限</th><td>なし（更新手続きも不要）</td></tr>
     </table>
+
+    <figure>
+      <figcaption>図2　出題分野と問題数<small>全100問</small></figcaption>
+      <div class="stack" role="img" aria-label="ストラテジ系35問、マネジメント系20問、テクノロジ系45問">
+        <div class="s-strategy" style="width:35%" title="ストラテジ系：35問程度">35問</div>
+        <div class="s-management" style="width:20%" title="マネジメント系：20問程度">20問</div>
+        <div class="s-technology" style="width:45%" title="テクノロジ系：45問程度">45問</div>
+      </div>
+      <div class="fields">
+        <div class="field f-strategy">
+          <span class="nm">ストラテジ系</span><span class="ct">経営全般・35問程度</span>
+          <ul><li>経営戦略・マーケティング</li><li>財務・会計</li><li>法務（知的財産・個人情報など）</li></ul>
+        </div>
+        <div class="field f-management">
+          <span class="nm">マネジメント系</span><span class="ct">IT管理・20問程度</span>
+          <ul><li>プロジェクトマネジメント</li><li>開発手法（アジャイルなど）</li><li>サービスマネジメント・監査</li></ul>
+        </div>
+        <div class="field f-technology">
+          <span class="nm">テクノロジ系</span><span class="ct">IT技術・45問程度</span>
+          <ul><li>セキュリティ・ネットワーク</li><li>AI・ビッグデータ・IoT</li><li>コンピュータの基礎</li></ul>
+        </div>
+      </div>
+    </figure>
+
+    <figure>
+      <figcaption>図3　合格基準<small>どちらも満たす必要があります</small></figcaption>
+      <div class="gauge-row total">
+        <span><b>総合</b></span>
+        <div class="gauge" title="総合評価点 600点以上／1,000点">
+          <div class="fail" style="width:60%"></div><div class="pass" style="left:60%"></div>
+          <div class="mark" style="left:60%"></div><span class="val" style="left:60%">600点以上</span>
+        </div>
+      </div>
+      <div class="gauge-row">
+        <span>ストラテジ系</span>
+        <div class="gauge" title="ストラテジ系 300点以上／1,000点">
+          <div class="fail" style="width:30%"></div><div class="pass" style="left:30%"></div>
+          <div class="mark" style="left:30%"></div><span class="val" style="left:30%">300点以上</span>
+        </div>
+      </div>
+      <div class="gauge-row">
+        <span>マネジメント系</span>
+        <div class="gauge" title="マネジメント系 300点以上／1,000点">
+          <div class="fail" style="width:30%"></div><div class="pass" style="left:30%"></div>
+          <div class="mark" style="left:30%"></div><span class="val" style="left:30%">300点以上</span>
+        </div>
+      </div>
+      <div class="gauge-row">
+        <span>テクノロジ系</span>
+        <div class="gauge" title="テクノロジ系 300点以上／1,000点">
+          <div class="fail" style="width:30%"></div><div class="pass" style="left:30%"></div>
+          <div class="mark" style="left:30%"></div><span class="val" style="left:30%">300点以上</span>
+        </div>
+      </div>
+      <div class="gauge-scale"><div></div><div><span>0</span><span>500</span><span>1,000点</span></div></div>
+      <div class="legend-inline">
+        <span><i style="background:repeating-linear-gradient(135deg,#eee 0 4px,#f8f8f8 4px 8px)"></i>不合格の範囲</span>
+        <span><i style="background:var(--accent-soft)"></i>合格の範囲</span>
+      </div>
+      <p class="source">得意分野で点数を稼いでも、1分野でも300点に届かなければ不合格になります。</p>
+    </figure>
   </section>
 
-  <!-- 3 -->
+  <!-- ================= 2. サマリ ================= -->
+  <section id="summary">
+    <h2><span class="no">2.</span>受験までの流れ（サマリ）</h2>
+    <p>先に受験日を予約し、その日に向けて勉強するのがおすすめです。日程が決まっていると、学習計画を逆算して立てやすくなります。</p>
+
+    <figure>
+      <figcaption>図4　申し込みから受験まで</figcaption>
+      <ol class="flow">
+        <li><span class="t">利用者ID登録</span><span class="d">公式サイトで新規登録</span></li>
+        <li><span class="t">会場・日時予約</span><span class="d">全国のテストセンターから選択</span></li>
+        <li><span class="t">受験料支払い</span><span class="d">7,500円</span></li>
+        <li class="is-study"><span class="t">勉強</span><span class="d">1日1〜2時間 × 1〜3ヶ月が目安</span></li>
+        <li class="is-goal"><span class="t">確認票を持って受験</span><span class="d">本人確認書類も必要</span></li>
+      </ol>
+      <div class="span-bar" aria-hidden="true">
+        <div class="seg a">申し込み（1日で完了）</div>
+        <div class="seg b">受験日まで（1〜3ヶ月）</div>
+      </div>
+    </figure>
+
+    <p class="summary-links">
+      → 各ステップの詳細は <a href="#apply">4. 申し込み手順</a>、勉強の進め方は <a href="#study">3. 勉強時間と学習内容</a> をご覧ください。
+    </p>
+  </section>
+
+  <!-- ================= 3. 勉強時間と内容 ================= -->
+  <section id="study">
+    <h2><span class="no">3.</span>合格に必要な勉強時間と学習内容</h2>
+    <p>一般的な目安は、ITの知識がある人で<strong>100〜150時間</strong>、初学者で<strong>180時間</strong>程度です。ただし実際の合格者を見ると、初学者でも約7割が100時間未満で合格しています。通勤などのスキマ時間を活用し、1日1〜2時間の学習で「1〜3ヶ月程度」での合格を目指せます。</p>
+
+    <figure>
+      <figcaption>図5　勉強時間の目安<small>単位：時間</small></figcaption>
+      <div class="range-row">
+        <span class="lb">IT経験者<small>一般的な目安</small></span>
+        <div class="track" title="IT経験者：約100〜150時間">
+          <div class="grid" style="left:25%"></div><div class="grid" style="left:50%"></div><div class="grid" style="left:75%"></div>
+          <div class="bar" style="left:50%;width:25%"></div>
+          <span class="tx" style="left:75%">100〜150</span>
+        </div>
+      </div>
+      <div class="range-row">
+        <span class="lb">初学者<small>一般的な目安</small></span>
+        <div class="track" title="初学者：約180時間">
+          <div class="grid" style="left:25%"></div><div class="grid" style="left:50%"></div><div class="grid" style="left:75%"></div>
+          <div class="dot" style="left:90%"></div>
+          <span class="tx" style="left:90%;transform:translate(-100%,-50%);padding:0 12px 0 0">180</span>
+        </div>
+      </div>
+      <div class="range-row">
+        <span class="lb">初学者<small>実際の合格者の約7割</small></span>
+        <div class="track" title="初学者の合格者の70.8%が100時間未満">
+          <div class="grid" style="left:25%"></div><div class="grid" style="left:50%"></div><div class="grid" style="left:75%"></div>
+          <div class="bar light" style="left:0;width:50%"></div>
+          <span class="tx" style="left:50%">100未満</span>
+        </div>
+      </div>
+      <div class="range-axis">
+        <div></div>
+        <div class="ticks"><span style="left:0">0</span><span style="left:25%">50</span><span style="left:50%">100</span><span style="left:75%">150</span><span style="left:100%;transform:translateX(-100%)">200</span></div>
+      </div>
+    </figure>
+
+    <figure>
+      <figcaption>図6　IT初学者の合格者が実際にかけた勉強時間<small>48名</small></figcaption>
+      <div class="hist" role="img" aria-label="30時間未満2.1%、30〜50時間20.8%、50〜80時間25.0%、80〜100時間22.9%、100〜150時間18.8%、150時間以上10.4%">
+        <div class="col" title="30時間未満：1名（2.1%）"><span class="pct">2.1%</span><div class="bar" style="height:8.4%"></div></div>
+        <div class="col" title="30〜50時間未満：10名（20.8%）"><span class="pct">20.8%</span><div class="bar" style="height:83.2%"></div></div>
+        <div class="col" title="50〜80時間未満：12名（25.0%）"><span class="pct">25.0%</span><div class="bar" style="height:100%"></div></div>
+        <div class="col" title="80〜100時間未満：11名（22.9%）"><span class="pct">22.9%</span><div class="bar" style="height:91.6%"></div></div>
+        <div class="col" title="100〜150時間未満：9名（18.8%）"><span class="pct">18.8%</span><div class="bar over" style="height:75.2%"></div></div>
+        <div class="col" title="150時間以上：5名（10.4%）"><span class="pct">10.4%</span><div class="bar over" style="height:41.6%"></div></div>
+      </div>
+      <div class="hist-labels">
+        <span>30時間<br>未満</span><span>30〜50</span><span>50〜80</span><span>80〜100</span><span>100〜150</span><span>150時間<br>以上</span>
+      </div>
+      <div class="bracket" aria-hidden="true"><div class="in"></div><div class="in-t">100時間未満で合格：70.8%</div></div>
+      <p class="source">出典：スタディング「ITパスポートとは？どんな資格か・難易度や取得メリットをわかりやすく解説」（2026年8月31日更新）掲載の合格者アンケート（IT初心者属性48名）</p>
+    </figure>
+
+    <h3>経験に応じた学習の重点</h3>
+    <div class="who">
+      <div>
+        <div class="h">IT経験者<small>IT業務経験・基礎あり</small></div>
+        <p>IT基礎の確認に加え、経営全般・法務・プロジェクト管理などのストラテジ／マネジメント系知識の補強が中心になります。</p>
+      </div>
+      <div>
+        <div class="h">非IT経験者<small>未経験・文系・非IT職</small></div>
+        <p>テクノロジ系に不安を感じやすいですが、問われるのは利用者として知っておくべき基礎です。用語と仕組みを理解すれば得点できます。業務で触れるストラテジ・マネジメント系は得点源になります。</p>
+      </div>
+    </div>
+
+    <h3>勉強の進め方</h3>
+    <ol class="points">
+      <li><span class="n">01</span><div><b>まず過去問で出題傾向をつかむ</b>出題範囲は広いですが、よく出るテーマは限られています。数年分の過去問に目を通し、どの分野から何が出るかを把握してから学習範囲を絞ります。</div></li>
+      <li><span class="n">02</span><div><b>苦手分野を残さない</b>3分野それぞれで300点以上が必要です。問題数の多いストラテジ系・テクノロジ系を中心にしつつ、マネジメント系も最低限押さえます。</div></li>
+      <li><span class="n">03</span><div><b>計算問題は手計算で練習する</b>電卓は持ち込めません。会場で配られるメモ用紙で解ける程度の出題なので、過去問で慣れておけば十分です。</div></li>
+      <li><span class="n">04</span><div><b>CBT方式に慣れておく</b>パソコン画面で解答する形式です。公式サイトの体験ソフトや、Web上の過去問サイトで画面に慣れておくと当日あわてません。</div></li>
+    </ol>
+  </section>
+
+  <!-- ================= 4. 申し込み手順 ================= -->
   <section id="apply">
-    <h2><span class="no">3.</span>ITパスポート試験を受験するには</h2>
-    <p>ITパスポート試験は、年間を通じて、全国にあるテストセンターでほぼ毎日（毎週末や平日など）実施されています。特定の試験日はなく、自分の都合に合わせて受験日と会場を選ぶことができます。</p>
-    <p>受験するためには、公式サイトからのインターネット申し込みが必要です。具体的な受験手順は以下の4ステップです。</p>
-    <ol class="steps">
+    <h2><span class="no">4.</span>詳細な申し込み手順</h2>
+    <p>ITパスポート試験は、年間を通じて、全国にあるテストセンターでほぼ毎日（毎週末や平日など）実施されています。特定の試験日はなく、自分の都合に合わせて受験日と会場を選ぶことができます。受験するためには、公式サイトからのインターネット申し込みが必要です。</p>
+
+    <ol class="timeline">
       <li>
+        <span class="pin">1</span>
+        <span class="phase">申し込み</span>
         <b>「利用者ID」の登録</b>
-        <a href="https://www3.jitec.ipa.go.jp/JitesCbt/index.html" target="_blank" rel="noopener noreferrer">ITパスポート試験公式サイト</a>にアクセスし、初めての場合は「利用者ID」を新規登録します。
+        <p><a href="https://www3.jitec.ipa.go.jp/JitesCbt/index.html" target="_blank" rel="noopener noreferrer">ITパスポート試験公式サイト</a>にアクセスし、初めての場合は「利用者ID」を新規登録します。</p>
       </li>
       <li>
+        <span class="pin">2</span>
+        <span class="phase">申し込み</span>
         <b>試験会場・日時の選択</b>
-        マイページにログイン後、全国47都道府県にあるテストセンターの中から、希望する「会場」「日付」「時間帯」を選択します（座席が空いていれば、直前でも予約可能です）。
+        <p>マイページにログイン後、全国47都道府県にあるテストセンターの中から、希望する「会場」「日付」「時間帯」を選択します。座席が空いていれば、直前でも予約可能です。</p>
+        <div class="sub">予約できるのは3ヶ月先までです。</div>
       </li>
       <li>
+        <span class="pin">3</span>
+        <span class="phase">申し込み</span>
         <b>受験料の支払い</b>
-        受験料（<strong>7,500円</strong>）を支払います。決済方法はクレジットカード、コンビニ決済、ペイジー（銀行振込）から選べます。
+        <p>受験料（<strong>7,500円</strong>）を支払います。決済方法はクレジットカード、コンビニ決済、ペイジー（銀行振込）から選べます。</p>
       </li>
       <li>
-        <b>受験票の確認</b>
-        支払いが完了すると予約が確定し、マイページから「確認票」がダウンロードできるようになります（当日の持ち物として必要になります）。
+        <span class="pin">4</span>
+        <span class="phase">申し込み</span>
+        <b>確認票のダウンロード</b>
+        <p>支払いが完了すると予約が確定し、マイページから「確認票」がダウンロードできるようになります。当日の持ち物として必要になります。</p>
+      </li>
+      <li>
+        <span class="pin dark">当日</span>
+        <span class="phase">受験</span>
+        <b>試験当日</b>
+        <div class="sub">
+          <ul>
+            <li>持ち物：確認票、顔写真付きの本人確認書類</li>
+            <li>電卓は持ち込めません（メモ用紙と筆記用具は会場で配られます）</li>
+            <li>試験終了直後に、画面で得点を確認できます</li>
+          </ul>
+        </div>
+      </li>
+      <li>
+        <span class="pin dark">後</span>
+        <span class="phase">受験後</span>
+        <b>合格発表・合格証書</b>
+        <p>正式な合格発表は受験した月の翌月15日前後、合格証書はさらにその翌月15日前後に届きます。資格に有効期限はありません。</p>
       </li>
     </ol>
   </section>
 
-  <!-- 4 -->
+  <!-- ================= 5. 教材 ================= -->
   <section id="resources">
-    <h2><span class="no">4.</span>ITパスポートの試験勉強</h2>
+    <h2><span class="no">5.</span>勉強するための教材</h2>
     <p>現時点の無料コンテンツは以下のとおりです。この他の情報は常時更新してまいります。</p>
-    <ol class="resources">
+    <ul class="resources">
       <li>
-        公式過去問サイト：「過去問道場」<br>
-        <a class="url" href="https://www.itpassportsiken.com/ipkakomon.php" target="_blank" rel="noopener noreferrer">https://www.itpassportsiken.com/ipkakomon.php</a>
+        <span class="tag">過去問</span>
+        <div>
+          <div class="tt">過去問サイト「過去問道場」</div>
+          <a class="url" href="https://www.itpassportsiken.com/ipkakomon.php" target="_blank" rel="noopener noreferrer">https://www.itpassportsiken.com/ipkakomon.php</a>
+        </div>
       </li>
       <li>
-        2022〜2023年に実施した社内勉強会資料<br>
-        <a class="url" href="https://deecorp365.sharepoint.com/sites/projects/IT1/Forms/AllItems.aspx" target="_blank" rel="noopener noreferrer">https://deecorp365.sharepoint.com/sites/projects/IT1/Forms/AllItems.aspx</a>
-        <ol>
-          <li>FY22下期 シーズン1</li>
-          <li>FY23下期 シーズン2</li>
-        </ol>
+        <span class="tag">社内資料</span>
+        <div>
+          <div class="tt">2022〜2023年に実施した社内勉強会資料</div>
+          <a class="url" href="https://deecorp365.sharepoint.com/sites/projects/IT1/Forms/AllItems.aspx" target="_blank" rel="noopener noreferrer">https://deecorp365.sharepoint.com/sites/projects/IT1/Forms/AllItems.aspx</a>
+          <ol>
+            <li>FY22下期 シーズン1</li>
+            <li>FY23下期 シーズン2</li>
+          </ol>
+        </div>
       </li>
-    </ol>
+    </ul>
     <p class="note">※有償サービスやテキストなどに関しては、現在検討中です。</p>
   </section>
 
+  <p class="refs">
+    参考：IPA「ITパスポート試験」公式サイト／スタディング「ITパスポートとは？どんな資格か・難易度や取得メリットをわかりやすく解説」（2026年8月31日更新）。試験内容・日程は変更される場合があります。最新情報は公式サイトでご確認ください。
+  </p>
   <p class="back"><a href="#top">ページの先頭へ</a></p>
 
 </div>
